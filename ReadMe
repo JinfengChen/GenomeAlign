@@ -1,0 +1,37 @@
+Here is a Lastz-ChainNet-Ortholog pipeline for whole genome synteny alignment.
+If you want to understand the whole pipeline ,please read :
+http://genomewiki.ucsc.edu/index.php/Whole_genome_alignment_howto
+
+1. whole genome alignment by LASTZ (the genome is better to mask the repeats into  lower case) 
+A tool for aligning two DNA sequences, and inferring appropriate scoring parameters automatically.  
+
+LASTZ is a drop-in replacement for BLASTZ, and is backward compatible with BLASTZ's command-line syntax. That is, it supports all of BLASTZ's options but also has additional ones, and may produce slightly different alignment results. 
+
+more information:
+http://www.bx.psu.edu/miller_lab/dist/README.lastz-1.01.50/README.lastz-1.01.50.html
+http://genomewiki.ucsc.edu/index.php/Hg19_conservation_lastz_parameters
+
+
+2. chain the alignment with same sequence within long gaps and choose the best pairwise alignment for each Target sequence region by ChainNet Package 
+
+more information: all ChainNet format
+http://genome.ucsc.edu/FAQ/FAQformat
+
+
+3. choose the best pairwise alignment for Both Target and Query sequence region by ortholog_net
+This scrpit is valid in Animal comparation which is considered as no whole genome duplication for Myrs
+While in Plant it do has one-multi or multi-multi alignment for their continuously whole genome duplications , and hard to confirm which is really the best result
+
+Example
+
+mkdir output 
+chdir output
+perl ../bin/step0_data_preparation.pl  -spec arab -i ../input/arab.fa -cut 0 (using qsub)
+perl ../bin/step0_data_preparation.pl  -spec cucumber -i ../input/cucumber.fa -cut 0 (using qsub)
+perl ../bin/step1_run_lastz.pl -tar_spec arab -qry_spec cucumber (using qsub)
+wait for above two script down ...
+perl ../bin/step2_chainnet.pl  -tar_spec arab -qry_spec cucumber -tar_latin ARATH -qry_latin CUSCA(using qsub)
+wait for above script down ...
+perl ../bin/step3_ortholog_net.pl (Just an example, do not do it in a plant comparation)
+
+
